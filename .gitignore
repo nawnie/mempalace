@@ -38,3 +38,7 @@ venv/
 *.sqlite3-journal
 .envrc
 .review-logs
+
+# Allow project hook wiring files (for Claude/Grok/Cursor auto hooks)
+!/.claude/settings*.json
+!/.grok/hooks/*.json
