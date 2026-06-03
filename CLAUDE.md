@@ -39,6 +39,8 @@ We do not accept summarization of user content, cloud storage/sync features, tel
 uv sync --extra dev   # recommended; or: pip install -e ".[dev]"
 ```
 
+**Grok CLI, Claude Code, Codex, Gemini CLI, Cursor**: Full hook support for automatic verbatim memory capture of your sessions (see `hooks/README.md`). Grok also reads your existing `.claude/settings.json` hook wiring for zero-extra-config usage.
+
 ## Commands
 
 ```bash
@@ -90,7 +92,7 @@ mempalace/
 ├── split_mega_files.py  # Split concatenated transcript files
 └── version.py           # Single source of truth for version
 
-hooks/                   # Claude Code hook scripts
+hooks/                   # AI CLI hook scripts (Claude Code / Grok / Codex / Cursor compatible)
 ├── mempal_save_hook.sh        # Stop: triggers diary save
 └── mempal_precompact_hook.sh  # PreCompact: saves state before compression
 ```

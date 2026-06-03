@@ -65,6 +65,59 @@ Add to `.codex/hooks.json`:
 }
 ```
 
+## Install — Grok CLI (xAI)
+
+Grok discovers hooks from project `.claude/settings.json` (Claude compatibility layer) and from `.grok/hooks/*.json`.
+
+The simplest is to use the same `.claude/settings.json` (or `.claude/settings.local.json`) that Claude Code uses — Grok will pick it up:
+
+```json
+{
+  "hooks": {
+    "Stop": [{
+      "matcher": "*",
+      "hooks": [{
+        "type": "command",
+        "command": "/absolute/path/to/mempalace/hooks/mempal_save_hook.sh",
+        "timeout": 30
+      }]
+    }],
+    "PreCompact": [{
+      "hooks": [{
+        "type": "command",
+        "command": "/absolute/path/to/mempalace/hooks/mempal_precompact_hook.sh",
+        "timeout": 30
+      }]
+    }]
+  }
+}
+```
+
+Place it at the root of your MemPalace-tracked project (or globally in `~/.claude/settings.json`).
+
+You can also use native Grok format in `.grok/hooks/mempal.json`:
+
+```json
+{
+  "hooks": {
+    "Stop": [{
+      "hooks": [
+        { "type": "command", "command": "hooks/mempal_save_hook.sh", "timeout": 30 }
+      ]
+    }],
+    "PreCompact": [{
+      "hooks": [
+        { "type": "command", "command": "hooks/mempal_precompact_hook.sh", "timeout": 30 }
+      ]
+    }]
+  }
+}
+```
+
+On Windows: the `.sh` scripts require Git Bash, MSYS2, or WSL bash in PATH. Use full bash path if needed, e.g. `"C:\\Program Files\\Git\\bin\\bash.exe" -c '...' ` or set `MEMPALACE_HOOK_SHELL` appropriately. The Python bits inside the hooks are cross-platform.
+
+After adding, run `/hooks-trust` (or use the Hooks modal) the first time you open the project in Grok so the hooks are allowed to execute.
+
 ## Configuration
 
 Edit `mempal_save_hook.sh` to change:
