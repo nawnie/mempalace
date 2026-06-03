@@ -1,5 +1,5 @@
 #!/bin/bash
-# MemPalace PreCompact Hook — thin wrapper calling Python CLI
+# MemPalace PreCompact Hook â€” thin wrapper calling Python CLI
 # All logic lives in mempalace.hooks_cli for cross-harness extensibility
 run_mempalace_hook() {
   if command -v mempalace >/dev/null 2>&1; then

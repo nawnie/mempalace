@@ -1,0 +1,5 @@
+﻿# Shell scripts must stay LF for shebang + cross-platform (WSL, Git Bash, macOS, Linux)
+*.sh text eol=lf
+
+# JSON hook configs
+*.json text eol=lf

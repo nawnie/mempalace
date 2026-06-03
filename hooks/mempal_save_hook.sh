@@ -1,14 +1,14 @@
 #!/bin/bash
-# MEMPALACE SAVE HOOK — Auto-save every N exchanges
+# MEMPALACE SAVE HOOK â€” Auto-save every N exchanges
 #
 # Claude Code "Stop" hook. After every assistant response:
 # 1. Counts human messages in the session transcript
 # 2. Every SAVE_INTERVAL messages, BLOCKS the AI from stopping
 # 3. Returns a reason telling the AI to save structured diary + palace entries
-# 4. AI does the save (topics, decisions, code, quotes → organized into palace)
-# 5. Next Stop fires with stop_hook_active=true → lets AI stop normally
+# 4. AI does the save (topics, decisions, code, quotes â†’ organized into palace)
+# 5. Next Stop fires with stop_hook_active=true â†’ lets AI stop normally
 #
-# The AI does the classification — it knows what wing/hall/closet to use
+# The AI does the classification â€” it knows what wing/hall/closet to use
 # because it has context about the conversation. No regex needed.
 #
 # === INSTALL ===
@@ -36,9 +36,9 @@
 # === HOW IT WORKS ===
 #
 # Claude Code sends JSON on stdin with these fields:
-#   session_id       — unique session identifier
-#   stop_hook_active — true if AI is already in a save cycle (prevents infinite loop)
-#   transcript_path  — path to the JSONL transcript file
+#   session_id       â€” unique session identifier
+#   stop_hook_active â€” true if AI is already in a save cycle (prevents infinite loop)
+#   transcript_path  â€” path to the JSONL transcript file
 #
 # When we block, Claude Code shows our "reason" to the AI as a system message.
 # The AI then saves to memory, and when it tries to stop again,
@@ -47,7 +47,7 @@
 # === MEMPALACE CLI ===
 # The hook ALWAYS mines the active conversation transcript automatically
 # (via `mempalace mine <transcript-dir> --mode convos`). MEMPAL_DIR is an
-# *additional*, optional target for project files — it does not replace
+# *additional*, optional target for project files â€” it does not replace
 # the conversation mine.
 #
 # === CONFIGURATION ===
@@ -58,7 +58,7 @@ mkdir -p "$STATE_DIR"
 
 # Optional: project directory (code / notes / docs) to also mine each
 # save trigger. Mined with `--mode projects`. The conversation transcript
-# is always mined regardless — this is purely additive.
+# is always mined regardless â€” this is purely additive.
 # Example: MEMPAL_DIR="$HOME/projects/my_app"
 MEMPAL_DIR=""
 
@@ -66,20 +66,20 @@ MEMPAL_DIR=""
 #
 # Why this is nontrivial: GUI-launched Claude Code on macOS (or any harness
 # that doesn't inherit the user's shell PATH) may find a `python3` on PATH
-# that lacks mempalace — e.g. /usr/bin/python3 while the user installed
+# that lacks mempalace â€” e.g. /usr/bin/python3 while the user installed
 # mempalace into a venv or pyenv. Users in that situation can point the
 # hook at the right interpreter by exporting MEMPAL_PYTHON.
 #
 # Resolution order (first hit wins):
-#   1. $MEMPAL_PYTHON          — explicit user override (absolute path)
-#   2. $(command -v python3)   — first python3 on the hook's PATH
-#   3. bare "python3"          — last-resort fallback (hope the PATH has it)
+#   1. $MEMPAL_PYTHON          â€” explicit user override (absolute path)
+#   2. $(command -v python3)   â€” first python3 on the hook's PATH
+#   3. bare "python3"          â€” last-resort fallback (hope the PATH has it)
 MEMPAL_PYTHON_BIN="${MEMPAL_PYTHON:-}"
 if [ -z "$MEMPAL_PYTHON_BIN" ] || [ ! -x "$MEMPAL_PYTHON_BIN" ]; then
     MEMPAL_PYTHON_BIN="$(command -v python3 2>/dev/null || echo python3)"
 fi
 
-# ── Silent mode / opt-out ──────────────────────────────────────────────
+# â”€â”€ Silent mode / opt-out â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Set MEMPALACE_HOOKS_AUTO_SAVE=false to disable auto-save blocking entirely.
 # The hook stays installed but passes through without interrupting the session.
 # Can also be set in ~/.mempalace/config.json: {"hooks": {"auto_save": false}}
@@ -137,7 +137,7 @@ INPUT=$(cat)
 #   * ``umask 077`` so the ``2>$STATE_DIR/last_python_err.log`` redirect
 #     creates the file at mode 0600 atomically. Without it, the file
 #     appeared briefly at the parent process's umask (often 0644) before
-#     the explicit ``chmod 600`` below closed it — a small TOCTOU window
+#     the explicit ``chmod 600`` below closed it â€” a small TOCTOU window
 #     where another local user on a shared box could read the traceback,
 #     which can echo back the user's home + project layout.
 #
@@ -200,7 +200,7 @@ if [ -n "$INPUT" ] && [ "$_MEMPAL_PARSE_MARKER" != "__MEMPAL_PARSE_OK__" ]; then
     # natural ``head``-closes-stdin / SIGPIPE-on-printf interaction is
     # silently absorbed by bash (the canonical way to read N bytes from
     # a string in shell). The ``umask 077`` subshell creates
-    # last_input.log at mode 0600 atomically — the ``chmod 600`` below
+    # last_input.log at mode 0600 atomically â€” the ``chmod 600`` below
     # stays as a belt-and-suspenders guard if a future edit drops the
     # umask line.
     ( umask 077 && printf '%s' "$INPUT" | head -c 4096 > "$STATE_DIR/last_input.log" )
@@ -230,7 +230,7 @@ is_valid_transcript_path() {
 }
 
 # If we're already in a save cycle, let the AI stop normally
-# This is the infinite-loop prevention: block once → AI saves → tries to stop again → we let it through
+# This is the infinite-loop prevention: block once â†’ AI saves â†’ tries to stop again â†’ we let it through
 if [ "$STOP_HOOK_ACTIVE" = "True" ] || [ "$STOP_HOOK_ACTIVE" = "true" ]; then
     echo "{}"
     exit 0
@@ -284,10 +284,10 @@ if [ "$SINCE_LAST" -ge "$SAVE_INTERVAL" ] && [ "$EXCHANGE_COUNT" -gt 0 ]; then
 
     echo "[$(date '+%H:%M:%S')] TRIGGERING SAVE at exchange $EXCHANGE_COUNT" >> "$STATE_DIR/hook.log"
 
-    # Auto-mine. Two independent targets — both run if both are set:
-    #   1. TRANSCRIPT_PATH (from Claude Code) → parent dir, --mode convos
-    #      (Claude Code session JSONL — must use the convo miner)
-    #   2. MEMPAL_DIR (user-configured project) → --mode projects
+    # Auto-mine. Two independent targets â€” both run if both are set:
+    #   1. TRANSCRIPT_PATH (from Claude Code) â†’ parent dir, --mode convos
+    #      (Claude Code session JSONL â€” must use the convo miner)
+    #   2. MEMPAL_DIR (user-configured project) â†’ --mode projects
     #      (code, notes, docs)
     # MEMPAL_DIR is *additive*, not an override: a user with MEMPAL_DIR
     # pointed at their project still gets the active conversation mined.
@@ -304,8 +304,8 @@ if [ "$SINCE_LAST" -ge "$SAVE_INTERVAL" ] && [ "$EXCHANGE_COUNT" -gt 0 ]; then
     fi
 
     # MEMPAL_VERBOSE toggle:
-    #   true  = developer mode — block and show diaries/code in chat
-    #   false = silent mode (default) — save in background, no chat clutter
+    #   true  = developer mode â€” block and show diaries/code in chat
+    #   false = silent mode (default) â€” save in background, no chat clutter
     # Set via: export MEMPAL_VERBOSE=true
     if [ "$MEMPAL_VERBOSE" = "true" ] || [ "$MEMPAL_VERBOSE" = "1" ]; then
         cat << 'HOOKJSON'
@@ -316,10 +316,10 @@ if [ "$SINCE_LAST" -ge "$SAVE_INTERVAL" ] && [ "$EXCHANGE_COUNT" -gt 0 ]; then
 HOOKJSON
     else
         # Silent mode: return empty JSON to not block. "decision": "allow" is
-        # not a valid value — only "block" or {} are recognized.
+        # not a valid value â€” only "block" or {} are recognized.
         echo '{}'
     fi
 else
-    # Not time yet — let the AI stop normally
+    # Not time yet â€” let the AI stop normally
     echo "{}"
 fi

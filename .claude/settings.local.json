@@ -1,0 +1,27 @@
+﻿{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"C:\\\\Users\\\\shawn\\\\Desktop\\\\mempalace\\\\hooks\\\\mempal_save_hook.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"C:\\\\Users\\\\shawn\\\\Desktop\\\\mempalace\\\\hooks\\\\mempal_precompact_hook.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
